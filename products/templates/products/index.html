@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Каталог товаров{% endblock %}
+
+{% block content %}
+<h1>Каталог товаров</h1>
+
+<div class="products-grid">
+  {% for product in page_obj %}
+    <div class="product-card">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% endif %}
+      <h2>{{ product.name }}</h2>
+      <p>{{ product.description|truncatechars:100 }}</p>
+      <p class="price">{{ product.price }} руб.</p>
+      <a href="{% url 'product_detail' product.pk %}">Подробнее</a>
+    </div>
+  {% empty %}
+    <p>Товаров пока нет.</p>
+  {% endfor %}
+</div>
+
+<!-- Постраничная навигация -->
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
