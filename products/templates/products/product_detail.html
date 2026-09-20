@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ product.name }}</h1>
+
+{% if product.image %}
+  <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+{% endif %}
+
+<p><strong>Цена:</strong> {{ product.price }} руб.</p>
+
+<div class="product-description">
+  <h3>Описание</h3>
+  <p>{{ product.description }}</p>
+</div>
+
+<p><small>Добавлен: {{ product.created_at|date:"d.m.Y H:i" }}</small></p>
+
+<a href="{% url 'index' %}">← Назад к списку</a>
+{% endblock %}
