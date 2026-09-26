@@ -1,26 +1,27 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from django.views.generic import ListView, DetailView, CreateView, TemplateView
+from django.urls import reverse_lazy
 from .models import Product
 from .forms import ProductForm
-from django.core.paginator import Paginator
 
+class ProductListView(ListView):
+    model = Product
+    template_name = 'products/product_list.html'
+    context_object_name = 'page_obj'
+    paginate_by = 6
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'products/product_detail.html', {'product': product})
+    def get_queryset(self):
+        return super().get_queryset().order_by('-created_at')
 
-def index(request):
-    products = Product.objects.all().order_by('-created_at')
-    paginator = Paginator(products, 6)  # 6 товаров на страницу
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'products/index.html', {'page_obj': page_obj})
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'products/product_detail.html'
+    context_object_name = 'product'
 
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    else:
-        form = ProductForm()
-    return render(request, 'products/add_product.html', {'form': form})
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+    success_url = reverse_lazy('index')
+
+class ContactView(TemplateView):
+    template_name = 'catalog/contact.html'

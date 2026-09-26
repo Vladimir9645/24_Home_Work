@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Удаление статьи</title></head>
+<body>
+    <h1>Вы уверены, что хотите удалить статью "{{ object.title }}"?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Да, удалить</button>
+    </form>
+    <a href="{% url 'post_detail' pk=object.pk %}">Отмена</a>
+</body>
+</html>

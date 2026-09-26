@@ -1,8 +1,14 @@
+# products/urls.py
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
-from . import views
+from .views import ProductListView, ProductDetailView, ProductCreateView
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("products/<int:pk>/", views.product_detail, name="product_detail"),
-    path("products/add/", views.add_product, name="add_product"),
-]
+    # Пустая строка '' критически важна!
+    path('', ProductListView.as_view(), name='index'),
+    path('<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
+    path('add/', ProductCreateView.as_view(), name='add_product'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
