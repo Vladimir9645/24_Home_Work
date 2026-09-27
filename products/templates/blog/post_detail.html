@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{ post.title }}</title></head>
+<body>
+    <h1>{{ post.title }}</h1>
+    <p><small>Дата: {{ post.created_at }} | Просмотров: {{ post.views }}</small></p>
+
+    {% if post.preview_image %}
+        <img src="{{ post.preview_image.url }}" alt="{{ post.title }}" style="max-width: 100%;">
+    {% endif %}
+
+    <div>{{ post.content|linebreaks }}</div>
+
+    <hr>
+    <a href="{% url 'post_update' pk=post.pk %}">Редактировать</a> |
+    <a href="{% url 'post_delete' pk=post.pk %}">Удалить</a> |
+    <a href="{% url 'post_list' %}">Назад к списку</a>
+</body>
+</html>

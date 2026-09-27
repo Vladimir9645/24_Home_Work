@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Блог</title></head>
+<body>
+    <h1>Все статьи</h1>
+    {% for post in posts %}
+        <div>
+            <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+            <p>{{ post.created_at|date:"d.m.Y" }} | Просмотров: {{ post.views }}</p>
+            {% if post.preview_image %}
+                <img src="{{ post.preview_image.url }}" alt="{{ post.title }}" width="200">
+            {% endif %}
+            <p>{{ post.content|truncatewords:30 }}</p>
+        </div>
+        <hr>
+    {% empty %}
+        <p>Статей пока нет.</p>
+    {% endfor %}
+
+    <br>
+    <a href="{% url 'post_create' %}">Добавить новую статью</a>
+</body>
+</html>
