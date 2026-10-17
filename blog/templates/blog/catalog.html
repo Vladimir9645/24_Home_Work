@@ -1,0 +1,11 @@
+<h1>Каталог товаров</h1>
+
+{% if products %}
+    <ul>
+        {% for product in products %}
+            <li>{{ product }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>В каталоге пока нет товаров (переменная products пуста).</p>
+{% endif %}

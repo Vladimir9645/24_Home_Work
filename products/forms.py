@@ -51,3 +51,4 @@ class ProductForm(forms.ModelForm):
             if image.size > max_size_bytes:
                 raise forms.ValidationError(f"Размер изображения не должен превышать {max_size_mb} МБ.")
         return image
+
