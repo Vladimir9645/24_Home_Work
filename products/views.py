@@ -10,17 +10,21 @@ def product_list(request):
     return render(request, "products/product_list.html", {"products": products})
 
 
-# ЭТА СТРАНИЦА ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
 @login_required
 def product_create(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST)
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('product_list')
+            return redirect("product_list")
     else:
         form = ProductForm()
-    return render(request, 'products/create.html', {'form': form})
+
+    return render(
+        request,
+        "products/product_form.html",
+        {"form": form, "title": "Добавить товар"},
+    )
 
 
 @login_required
