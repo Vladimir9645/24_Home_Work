@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Article  # замени Article на имя своей модели статьи
 
-@admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'status', 'views')
-    list_filter = ('status',)
-    search_fields = ('title',)
+from .models import User
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ("email", "is_active", "is_staff")
+    search_fields = ("email",)
