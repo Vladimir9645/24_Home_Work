@@ -1,57 +1,58 @@
-{% if user.is_authenticated %}
-{% if is_owner or is_moderator %}
-<a href="{% url 'product_edit' product.pk %}"
-   class="btn btn-outline-primary">Редактировать</a>
+{% extends "base.html" %}
 
-{% if is_owner %}
-<form method="post"
-      action="{% url 'unpublish_product' product.pk %}"
-      style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-warning">
-        Снять с публикации
-    </button>
-</form>
-{% elif is_moderator and can_unpublish %}
-<form method="post"
-      action="{% url 'unpublish_product' product.pk %}"
-      style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-warning">
-        Снять с публикации
-    </button>
-</form>
-{% endif %}
+{% block title %}{{ product.name }}{% endblock %}
 
-<!-- Кнопка удаления (через модальное окно) -->
-<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить
-</button>
+{% block content %}
+  <h2>{{ product.name }}</h2>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Подтверждение удаления</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Вы уверены, что хотите удалить товар «{{ product.name }}»?
-            </div>
-            <div class="modal-footer">
-                <!-- Форма удаления внутри модалки -->
-                <form method="post" action="{% url 'product_delete' product.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Да, удалить</button>
-                </form>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-            </div>
-        </div>
-    </div>
-</div>
+  {% if product.image %}
+    <img src="{{ product.image.url }}"
+         class="img-fluid mb-3"
+         alt="{{ product.name }}">
+  {% endif %}
 
-{% else %}
-<!-- Опционально: сообщение, если пользователь не имеет прав -->
-<p class="text-muted mt-3">У вас нет прав на редактирование этого товара.</p>
-{% endif %}
+  <p><strong>Описание:</strong> {{ product.description }}</p>
+  <p><strong>Цена:</strong> {{ product.price }}</p>
+  <p>
+    Статус публикации:
+    <strong>{{ product.is_published|yesno:"Опубликован,Черновик" }}</strong>
+  </p>
+
+  <a href="{% url 'product_list' %}"
+     class="btn btn-secondary">Назад в каталог</a>
+
+  {% if is_owner or is_moderator %}
+    <a href="{% url 'product_edit' product.pk %}"
+       class="btn btn-outline-primary">Редактировать</a>
+
+    {% if is_owner %}
+      <form method="post"
+            action="{% url 'unpublish_product' product.pk %}"
+            class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">
+          Снять с публикации
+        </button>
+      </form>
+    {% elif can_unpublish %}
+      <form method="post"
+            action="{% url 'unpublish_product' product.pk %}"
+            class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">
+          Снять с публикации
+        </button>
+      </form>
+    {% endif %}
+
+    <form method="post"
+          action="{% url 'product_delete' product.pk %}"
+          class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-danger">
+        Удалить
+      </button>
+    </form>
+  {% endif %}
 {% endblock %}
 
