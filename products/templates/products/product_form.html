@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} товар{% endblock %}
+
+{% block content %}
+  <h2>{{ action }}</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Ошибки формы целиком  -->
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      <label class="form-label">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.errors %}
+        <div class="text-danger small">{{ form.name.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ form.description.label }}</label>
+      {{ form.description }}
+      {% if form.description.errors %}
+        <div class="text-danger small">{{ form.description.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ form.price.label }}</label>
+      {{ form.price }}
+      {% if form.price.errors %}
+        <div class="text-danger small">{{ form.price.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ form.image.label }}</label>
+      {{ form.image }}
+      {% if form.image.errors %}
+        <div class="text-danger small">{{ form.image.errors }}</div>
+      {% endif %}
+      {% if form.instance.image %}
+        <p class="small text-muted">Текущее фото: <a href="{{ form.instance.image.url }}" target="_blank">посмотреть</a></p>
+      {% endif %}
+    </div>
+
+    <!-- Категория и публикация -->
+    {% if form.category %}
+    <div class="mb-3">
+      <label class="form-label">{{ form.category.label }}</label>
+      {{ form.category }}
+      {% if form.category.errors %}
+        <div class="text-danger small">{{ form.category.errors }}</div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if form.is_published %}
+    <div class="mb-3 form-check">
+      {{ form.is_published }}
+      <label class="form-check-label">{{ form.is_published.label }}</label>
+      {% if form.is_published.errors %}
+        <div class="text-danger small">{{ form.is_published.errors }}</div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">{{ action }}</button>
+  </form>
+
+  <a href="{% url 'products_list' %}" class="btn btn-secondary mt-3">Отмена</a>
+{% endblock %}

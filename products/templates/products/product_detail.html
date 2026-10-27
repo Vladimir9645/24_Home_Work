@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+  <h2>{{ product.name }}</h2>
+
+  {% if product.image %}
+    <img src="{{ product.image.url }}"
+         class="img-fluid mb-3"
+         alt="{{ product.name }}">
+  {% endif %}
+
+  <p><strong>Описание:</strong> {{ product.description|linebreaks }}</p>
+  <p><strong>Цена:</strong> {{ product.price }} ₽</p>
+
+  <p>
+    Статус публикации:
+    <strong>{{ product.is_published|yesno:"Опубликован,Черновик" }}</strong>
+  </p>
+
+  <a href="{% url 'products_list' %}"
+     class="btn btn-secondary">Назад в каталог</a>
+
+  {% if user.is_authenticated %}
+    {# Единая проверка прав: владелец ИЛИ модератор ИЛИ суперюзер #}
+    {% with can_manage=user.is_staff or user.groups.filter(name='Модератор продуктов').exists or product.owner == user %}
+      {% if can_manage %}
+        <a href="{% url 'product_edit' product.pk %}"
+           class="btn btn-outline-primary">Редактировать</a>
+
+        {% if not product.is_published %}
+          <form method="post"
+                action="{% url 'publish_product' product.pk %}"
+                class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Опубликовать</button>
+          </form>
+        {% else %}
+          <form method="post"
+                action="{% url 'unpublish_product' product.pk %}"
+                class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Снять с публикации</button>
+          </form>
+        {% endif %}
+
+        <form method="post"
+              action="{% url 'product_delete' product.pk %}"
+              class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger">Удалить</button>
+        </form>
+      {% endif %}
+    {% endwith %}
+  {% endif %}
+{% endblock %}
+
