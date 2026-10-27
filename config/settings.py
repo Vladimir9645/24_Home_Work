@@ -120,3 +120,11 @@ AUTHENTICATION_BACKENDS = [
     'users.backends.EmailAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+

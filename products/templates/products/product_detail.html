@@ -11,48 +11,48 @@
          alt="{{ product.name }}">
   {% endif %}
 
-  <p><strong>Описание:</strong> {{ product.description }}</p>
-  <p><strong>Цена:</strong> {{ product.price }}</p>
+  <p><strong>Описание:</strong> {{ product.description|linebreaks }}</p>
+  <p><strong>Цена:</strong> {{ product.price }} ₽</p>
+
   <p>
     Статус публикации:
     <strong>{{ product.is_published|yesno:"Опубликован,Черновик" }}</strong>
   </p>
 
-  <a href="{% url 'product_list' %}"
+  <a href="{% url 'products_list' %}"
      class="btn btn-secondary">Назад в каталог</a>
 
-  {% if is_owner or is_moderator %}
-    <a href="{% url 'product_edit' product.pk %}"
-       class="btn btn-outline-primary">Редактировать</a>
+  {% if user.is_authenticated %}
+    {# Единая проверка прав: владелец ИЛИ модератор ИЛИ суперюзер #}
+    {% with can_manage=user.is_staff or user.groups.filter(name='Модератор продуктов').exists or product.owner == user %}
+      {% if can_manage %}
+        <a href="{% url 'product_edit' product.pk %}"
+           class="btn btn-outline-primary">Редактировать</a>
 
-    {% if is_owner %}
-      <form method="post"
-            action="{% url 'unpublish_product' product.pk %}"
-            class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-warning">
-          Снять с публикации
-        </button>
-      </form>
-    {% elif can_unpublish %}
-      <form method="post"
-            action="{% url 'unpublish_product' product.pk %}"
-            class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-warning">
-          Снять с публикации
-        </button>
-      </form>
-    {% endif %}
+        {% if not product.is_published %}
+          <form method="post"
+                action="{% url 'publish_product' product.pk %}"
+                class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Опубликовать</button>
+          </form>
+        {% else %}
+          <form method="post"
+                action="{% url 'unpublish_product' product.pk %}"
+                class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Снять с публикации</button>
+          </form>
+        {% endif %}
 
-    <form method="post"
-          action="{% url 'product_delete' product.pk %}"
-          class="d-inline">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-outline-danger">
-        Удалить
-      </button>
-    </form>
+        <form method="post"
+              action="{% url 'product_delete' product.pk %}"
+              class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger">Удалить</button>
+        </form>
+      {% endif %}
+    {% endwith %}
   {% endif %}
 {% endblock %}
 
